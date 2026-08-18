@@ -19,6 +19,9 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
 
+      - name: Add wasm 
+        run: rustup target add wasm32-unknown-unknown
+      
       - name: Install cargo-leptos
         run: cargo install cargo-leptos --locked
 
