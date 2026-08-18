@@ -56,38 +56,8 @@ impl HashValues {
 }
 
 #[component]
-pub fn UartAsciiConverter() -> impl IntoView {
-    let (ascii, set_ascii) = signal(String::new());
-
-    let bytes = move || ascii.get().bytes().collect::<Vec<u8>>();
+fn ByteTable(bytes: Signal<Vec<u8>>) -> impl IntoView {
     view! {
-            <section class="uart-tool">
-
-                <div class="section-number">
-                    "UART / ASCII"
-                </div>
-
-                <h2>
-                    "ASCII Converter"
-                </h2>
-
-                <div class="converter">
-
-                    <div class="converter-panel">
-                    <div class="converter-panel-title">
-                        "INPUT"
-                    </div>
-                        <textarea
-                            class = "converter-input"
-                            placeholder="Enter ASCII text..."
-                            on:input=move |event| {
-                                set_ascii.set(event_target_value(&event));
-                            }
-                        />
-                    </div>
-
-    <div class="byte-inspector">
-
         <table class="byte-table">
 
             <thead>
@@ -102,15 +72,18 @@ pub fn UartAsciiConverter() -> impl IntoView {
 
             <tbody>
                 {move || {
-                    bytes()
+                    bytes
+                        .get()
                         .into_iter()
                         .enumerate()
                         .map(|(offset, byte)| {
-                            let ascii_char = if byte.is_ascii_graphic() || byte == b' ' {
-                                byte as char
-                            } else {
-                                '.'
-                            };
+
+                            let ascii_char =
+                                if byte.is_ascii_graphic() || byte == b' ' {
+                                    byte as char
+                                } else {
+                                    '.'
+                                };
 
                             view! {
                                 <tr>
@@ -125,27 +98,70 @@ pub fn UartAsciiConverter() -> impl IntoView {
                                     <td class="byte-decimal">
                                         {byte.to_string()}
                                     </td>
+
                                     <td class="byte-hex">
-                                        {format!("{:08b}",byte)}
+                                        {format!("{:08b}", byte)}
                                     </td>
+
                                     <td class="byte-ascii">
                                         {ascii_char.to_string()}
                                     </td>
                                 </tr>
                             }
+                            .into_any()
                         })
                         .collect_view()
                 }}
             </tbody>
 
         </table>
+    }
+}
 
-    </div>
 
+#[component]
+pub fn UartAsciiConverter() -> impl IntoView {
+    let (ascii, set_ascii) = signal(String::new());
+
+    let bytes = Signal::derive(move || {
+        ascii.get().bytes().collect::<Vec<u8>>()
+    });
+
+    view! {
+        <section class="uart-tool">
+
+            <div class="section-number">
+                "UART / ASCII"
+            </div>
+
+            <h2>
+                "ASCII Converter"
+            </h2>
+
+            <div class="converter">
+
+                <div class="converter-panel">
+                    <div class="converter-panel-title">
+                        "INPUT"
+                    </div>
+
+                    <textarea
+                        class="converter-input"
+                        placeholder="Enter ASCII text..."
+                        on:input=move |event| {
+                            set_ascii.set(event_target_value(&event));
+                        }
+                    />
                 </div>
 
-            </section>
-        }
+                <div class="byte-inspector">
+                    <ByteTable bytes=bytes />
+                </div>
+
+            </div>
+
+        </section>
+    }
 }
 
 #[component]

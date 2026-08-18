@@ -1120,16 +1120,17 @@ footer {
    UART / ASCII CONVERTER
    ========================================================= */
 
-.uart-converter {
+.uart-tool {
     width: 100%;
     max-width: 1100px;
     margin: 0 auto;
     padding: 90px 0;
 }
 
+
 /* Header -------------------------------------------------- */
 
-.uart-converter .section-number {
+.uart-tool .section-number {
     margin-bottom: 12px;
 
     color: var(--accent);
@@ -1140,24 +1141,14 @@ footer {
     letter-spacing: 0.12em;
 }
 
-.uart-converter h2 {
+.uart-tool h2 {
     margin: 0;
 
     font-size: clamp(2rem, 4vw, 3rem);
 
+    line-height: 1.1;
+
     letter-spacing: -0.05em;
-}
-
-.uart-description {
-    max-width: 650px;
-
-    margin-top: 16px;
-
-    color: var(--text-secondary);
-
-    font-size: 0.85rem;
-
-    line-height: 1.8;
 }
 
 
@@ -1166,20 +1157,28 @@ footer {
 .converter {
     display: grid;
 
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    grid-template-columns:
+        minmax(0, 0.8fr)
+        minmax(0, 1.2fr);
 
     gap: 20px;
 
     margin-top: 45px;
+
+    text-align: left;
 }
 
 
-/* Panels -------------------------------------------------- */
+/* Input panel -------------------------------------------- */
 
 .converter-panel {
     min-width: 0;
 
+    overflow: hidden;
+
     border: 1px solid var(--border);
+
+    border-radius: var(--radius);
 
     background: var(--surface);
 
@@ -1187,30 +1186,18 @@ footer {
         0 10px 30px rgba(0, 0, 0, 0.15);
 
     transition:
-        border-color 0.2s ease,
-        transform 0.2s ease;
+        border-color var(--transition),
+        transform var(--transition);
 }
 
 .converter-panel:hover {
-    border-color: var(--accent);
+    border-color: var(--border-bright);
+
+    transform: translateY(-2px);
 }
 
 
-/* Panel header ------------------------------------------- */
-
-.converter-panel-header {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding: 14px 18px;
-
-    border-bottom: 1px solid var(--border);
-
-    background: rgba(255, 255, 255, 0.02);
-}
+/* Panel title -------------------------------------------- */
 
 .converter-panel-title {
     display: flex;
@@ -1219,9 +1206,17 @@ footer {
 
     gap: 9px;
 
+    padding: 14px 18px;
+
+    border-bottom: 1px solid var(--border);
+
+    background: rgba(255, 255, 255, 0.02);
+
     color: var(--text-secondary);
 
     font-size: 0.68rem;
+
+    font-weight: 500;
 
     letter-spacing: 0.1em;
 }
@@ -1232,66 +1227,23 @@ footer {
     width: 6px;
     height: 6px;
 
+    flex-shrink: 0;
+
     border-radius: 50%;
 
     background: var(--accent);
 
-    box-shadow:
-        0 0 8px var(--accent);
-}
-
-
-/* Input mode --------------------------------------------- */
-
-.converter-modes {
-    display: flex;
-
-    gap: 5px;
-}
-
-.converter-mode {
-    padding: 5px 9px;
-
-    border: 1px solid transparent;
-
-    background: transparent;
-
-    color: var(--text-secondary);
-
-    font-family: inherit;
-
-    font-size: 0.65rem;
-
-    cursor: pointer;
-
-    transition:
-        color 0.2s ease,
-        border-color 0.2s ease,
-        background 0.2s ease;
-}
-
-.converter-mode:hover {
-    color: var(--text-primary);
-
-    border-color: var(--border);
-}
-
-.converter-mode.active {
-    color: var(--accent);
-
-    border-color: var(--accent);
-
-    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 0 8px var(--accent);
 }
 
 
 /* Text input --------------------------------------------- */
 
 .converter-input {
-    width: 100%;
-    min-height: 280px;
+    display: block;
 
-    box-sizing: border-box;
+    width: 100%;
+    min-height: 350px;
 
     padding: 20px;
 
@@ -1300,24 +1252,30 @@ footer {
 
     resize: vertical;
 
-    background: transparent !important;
-    color: var(--text-primary) !important;
+    background: var(--surface) !important;
+
+    color: var(--text) !important;
 
     font-family: "Fira Code", monospace;
+
     font-size: 0.8rem;
+
     line-height: 1.8;
 
     caret-color: var(--accent);
 }
 
 .converter-input::placeholder {
-    color: var(--text-secondary);
+    color: var(--text-muted);
 
-    opacity: 0.5;
+    opacity: 1;
 }
 
 .converter-input:focus {
-    background: transparent !important;
+    background: var(--surface) !important;
+
+    color: var(--text) !important;
+
     outline: none;
 }
 
@@ -1325,9 +1283,17 @@ footer {
 /* Byte inspector ----------------------------------------- */
 
 .byte-inspector {
-    overflow-x: auto;
+    min-width: 0;
 
-    max-height: 350px;
+    overflow: auto;
+
+    max-height: 410px;
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    background: var(--surface);
 }
 
 .byte-table {
@@ -1340,19 +1306,33 @@ footer {
     font-size: 0.7rem;
 }
 
+
+/* Table header ------------------------------------------- */
+
 .byte-table th {
-    padding: 11px 15px;
+    position: sticky;
+
+    top: 0;
+
+    z-index: 1;
+
+    padding: 12px 15px;
 
     border-bottom: 1px solid var(--border);
 
-    color: var(--text-secondary);
+    background: var(--surface);
 
-    font-weight: 400;
+    color: var(--text-muted);
+
+    font-weight: 500;
 
     text-align: left;
 
     letter-spacing: 0.06em;
 }
+
+
+/* Table rows --------------------------------------------- */
 
 .byte-table td {
     padding: 9px 15px;
@@ -1363,15 +1343,18 @@ footer {
 }
 
 .byte-table tbody tr {
-    transition: background 0.15s ease;
+    transition: background var(--transition);
 }
 
 .byte-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.035);
+    background: var(--surface-hover);
 }
 
+
+/* Table values ------------------------------------------- */
+
 .byte-offset {
-    color: var(--text-secondary);
+    color: var(--text-muted);
 }
 
 .byte-hex {
@@ -1387,13 +1370,13 @@ footer {
 .byte-binary {
     color: var(--text-secondary);
 
-    opacity: 0.7;
+    opacity: 0.75;
 }
 
 .byte-ascii {
     min-width: 50px;
 
-    color: var(--text-primary);
+    color: var(--text);
 }
 
 
@@ -1410,7 +1393,7 @@ footer {
 
     padding: 30px;
 
-    color: var(--text-secondary);
+    color: var(--text-muted);
 
     font-size: 0.7rem;
 
@@ -1424,69 +1407,52 @@ footer {
 }
 
 
-/* Footer ------------------------------------------------- */
+/* Responsive -------------------------------------------- */
 
-.converter-footer {
-    display: flex;
+@media (max-width: 850px) {
 
-    align-items: center;
-
-    justify-content: space-between;
-
-    margin-top: 12px;
-
-    color: var(--text-secondary);
-
-    font-size: 0.65rem;
-
-    letter-spacing: 0.05em;
-}
-
-.converter-status {
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-}
-
-.converter-status::before {
-    content: "";
-
-    width: 5px;
-    height: 5px;
-
-    border-radius: 50%;
-
-    background: var(--accent);
-
-    box-shadow:
-        0 0 7px var(--accent);
-}
-
-
-/* Mobile ------------------------------------------------- */
-
-@media (max-width: 800px) {
-
-    .uart-converter {
-        padding: 60px 20px;
+    .uart-tool {
+        padding: 80px 0;
     }
 
     .converter {
         grid-template-columns: 1fr;
+    }
 
+    .converter-input {
+        min-height: 240px;
+    }
+
+    .byte-inspector {
+        max-height: 350px;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .uart-tool {
+        padding: 60px 0;
+    }
+
+    .converter {
         gap: 15px;
     }
 
     .converter-input {
         min-height: 220px;
+
+        padding: 16px;
     }
 
-    .byte-inspector {
-        max-height: 300px;
+    .byte-table {
+        font-size: 0.65rem;
     }
 
+    .byte-table th,
+    .byte-table td {
+        padding: 8px 10px;
+    }
 }
 
 .file-input {
