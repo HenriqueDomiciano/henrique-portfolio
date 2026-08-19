@@ -567,62 +567,6 @@ section {
     line-height: 1.8;
 }
 
-.project-tags {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 7px;
-
-    margin-top: 22px;
-}
-
-.tag {
-    padding: 4px 9px;
-
-    border: 1px solid var(--border);
-
-    border-radius: 5px;
-
-    color: var(--text-muted);
-
-    font-size: 0.65rem;
-}
-
-.tag:hover {
-    border-color: var(--accent-dim);
-
-    color: var(--accent);
-}
-
-
-/* =========================================================
-   Footer
-   ========================================================= */
-
-footer {
-    padding: 50px 0;
-
-    border-top: 1px solid var(--border);
-
-    color: var(--text-muted);
-
-    font-size: 0.68rem;
-}
-
-.footer-inner {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-}
-
-.footer-accent {
-    color: var(--accent);
-}
-
-
 /* =========================================================
    Scrollbar
    ========================================================= */
