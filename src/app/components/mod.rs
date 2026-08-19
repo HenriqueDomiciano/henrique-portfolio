@@ -17,6 +17,7 @@ pub struct Project
 #[component]
 pub fn ProjectCard(project: Project, number:u32) -> impl IntoView {
     view! {
+        <div class="project-card">
         <A
             href=project.url
         >
@@ -32,5 +33,6 @@ pub fn ProjectCard(project: Project, number:u32) -> impl IntoView {
                 {project.description}
             </p>
         </A>
+        </div>
     }
 }

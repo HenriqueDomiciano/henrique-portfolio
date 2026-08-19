@@ -126,6 +126,13 @@ pub fn HomePage() -> impl IntoView {
                         >
                             "GITHUB"
                         </a>
+                        <a
+                            class="btn btn-secondary"
+                            href="https://www.linkedin.com/in/henrique-domiciano-osinski-8b683a217/"
+                            target="_blank"
+                        >
+                            "LINKEDIN"
+                        </a>
                     </div>
                 </div>
             </div>
@@ -146,6 +153,7 @@ pub fn HomePage() -> impl IntoView {
                     <p>
                         "Embedded systems, firmware and software projects."
                     </p>
+                    <br></br>
                 <div class="projects-grid">
 
                     {

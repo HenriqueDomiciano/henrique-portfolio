@@ -3,6 +3,33 @@ use leptos::wasm_bindgen::JsCast;
 use leptos::web_sys::HtmlInputElement;
 use leptos::{ev, prelude::*};
 
+
+#[derive(Clone)]
+struct ByteInfo {
+    offset: usize,
+    hex: String,
+    decimal: String,
+    binary: String,
+    ascii: char,
+}
+fn convert_ascii(input: &str) -> Vec<ByteInfo> {
+    input
+        .bytes()
+        .enumerate()
+        .map(|(offset, byte)| ByteInfo {
+            offset,
+            hex: format!("{:02X}", byte),
+            decimal: byte.to_string(),
+            binary: format!("{:08b}", byte),
+            ascii: if byte.is_ascii_graphic() || byte == b' ' {
+                byte as char
+            } else {
+                '.'
+            },
+        })
+        .collect()
+}
+
 #[derive(Clone)]
 struct HashValues {
     sha1: String,
@@ -55,77 +82,12 @@ impl HashValues {
     }
 }
 
-#[component]
-fn ByteTable(bytes: Signal<Vec<u8>>) -> impl IntoView {
-    view! {
-        <table class="byte-table">
-
-            <thead>
-                <tr>
-                    <th>"OFFSET"</th>
-                    <th>"HEX"</th>
-                    <th>"DEC"</th>
-                    <th>"BIN"</th>
-                    <th>"ASCII"</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {move || {
-                    bytes
-                        .get()
-                        .into_iter()
-                        .enumerate()
-                        .map(|(offset, byte)| {
-
-                            let ascii_char =
-                                if byte.is_ascii_graphic() || byte == b' ' {
-                                    byte as char
-                                } else {
-                                    '.'
-                                };
-
-                            view! {
-                                <tr>
-                                    <td class="byte-offset">
-                                        {format!("0x{:02X}", offset)}
-                                    </td>
-
-                                    <td class="byte-hex">
-                                        {format!("{:02X}", byte)}
-                                    </td>
-
-                                    <td class="byte-decimal">
-                                        {byte.to_string()}
-                                    </td>
-
-                                    <td class="byte-hex">
-                                        {format!("{:08b}", byte)}
-                                    </td>
-
-                                    <td class="byte-ascii">
-                                        {ascii_char.to_string()}
-                                    </td>
-                                </tr>
-                            }
-                            .into_any()
-                        })
-                        .collect_view()
-                }}
-            </tbody>
-
-        </table>
-    }
-}
-
 
 #[component]
 pub fn UartAsciiConverter() -> impl IntoView {
     let (ascii, set_ascii) = signal(String::new());
 
-    let bytes = Signal::derive(move || {
-        ascii.get().bytes().collect::<Vec<u8>>()
-    });
+    let bytes = move || convert_ascii(&ascii.get());
 
     view! {
         <section class="uart-tool">
@@ -141,6 +103,7 @@ pub fn UartAsciiConverter() -> impl IntoView {
             <div class="converter">
 
                 <div class="converter-panel">
+
                     <div class="converter-panel-title">
                         "INPUT"
                     </div>
@@ -152,10 +115,59 @@ pub fn UartAsciiConverter() -> impl IntoView {
                             set_ascii.set(event_target_value(&event));
                         }
                     />
+
                 </div>
 
                 <div class="byte-inspector">
-                    <ByteTable bytes=bytes />
+
+                    <table class="byte-table">
+
+                        <thead>
+                            <tr>
+                                <th>"OFFSET"</th>
+                                <th>"HEX"</th>
+                                <th>"DEC"</th>
+                                <th>"BIN"</th>
+                                <th>"ASCII"</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {move || {
+                                bytes()
+                                    .into_iter()
+                                    .map(|byte| {
+                                        view! {
+                                            <tr>
+                                                <td class="byte-offset">
+                                                    {format!("0x{:02X}", byte.offset)}
+                                                </td>
+
+                                                <td class="byte-hex">
+                                                    {byte.hex}
+                                                </td>
+
+                                                <td class="byte-decimal">
+                                                    {byte.decimal}
+                                                </td>
+
+                                                <td class="byte-binary">
+                                                    {byte.binary}
+                                                </td>
+
+                                                <td class="byte-ascii">
+                                                    {byte.ascii.to_string()}
+                                                </td>
+                                            </tr>
+                                        }
+                                        .into_any()
+                                    })
+                                    .collect::<Vec<_>>()
+                            }}
+                        </tbody>
+
+                    </table>
+
                 </div>
 
             </div>
