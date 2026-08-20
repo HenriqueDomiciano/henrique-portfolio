@@ -767,6 +767,25 @@ section {
 
 /* Panel title -------------------------------------------- */
 
+.converter-binary-panel-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    border-bottom: 1px solid var(--border);
+
+    background: rgba(255, 255, 255, 0.02);
+
+    color: var(--text-secondary);
+
+    font-size: 0.68rem;
+
+    font-weight: 500;
+
+    letter-spacing: 0.1em;
+}
 .converter-panel-title {
     display: flex;
 
@@ -806,6 +825,31 @@ section {
 
 
 /* Text input --------------------------------------------- */
+
+.converter-binary-input {
+    display: block;
+
+    width: 100%;
+
+    padding: 20px;
+
+    border: none;
+    outline: none;
+
+    resize: vertical;
+
+    background: var(--surface) !important;
+
+    color: var(--text) !important;
+
+    font-family: "Fira Code", monospace;
+
+    font-size: 0.8rem;
+
+    line-height: 1.8;
+
+    caret-color: var(--accent);
+}
 
 .converter-input {
     display: block;

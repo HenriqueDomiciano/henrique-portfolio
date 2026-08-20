@@ -262,3 +262,314 @@ Effect::new(move |_| {
         </div>
     }
 }
+
+#[derive(Clone)]
+pub enum ShowModes
+{
+    Decimal,
+    Binary,
+    Hexadecimal
+}
+
+
+fn parse_input(value:String, mode:ShowModes) -> u64
+{
+    match mode {
+        ShowModes::Decimal => u64::from_str_radix(&value, 10).unwrap_or(0) ,
+        ShowModes::Binary =>  u64::from_str_radix(&value, 2).unwrap_or(0) ,
+        ShowModes::Hexadecimal => u64::from_str_radix(&value, 16).unwrap_or(0) ,
+    }
+}
+
+
+#[component]
+fn BitResult(value:Signal<u64>) -> impl IntoView
+{
+    view! { 
+        <div class="packet-display">
+            <div>
+                {move || format!("{:b}", value.get())}
+            </div>
+
+            <div>
+                {move || format!("{}", value.get())}
+            </div>
+
+            <div>
+                {move || format!("{:0X}", value.get())}
+            </div>
+        </div>
+    }    
+}
+
+
+#[component]
+pub fn BitManipulator() -> impl IntoView{
+    let (bit_value_1, set_bit_value_1) = signal(0u64);
+    let (bit_value_2, set_bit_value_2) = signal(0u64); 
+    let (option_read, option_write) = signal(ShowModes::Decimal);
+    let and_result = Signal::derive(move || {
+        bit_value_1.get() & bit_value_2.get()
+    });
+    
+    let or_result = Signal::derive(move || {
+        bit_value_1.get() | bit_value_2.get()
+    });
+    
+    let xor_result = Signal::derive(move || {
+        bit_value_1.get() ^ bit_value_2.get()
+    });
+    
+    let nand_result = Signal::derive(move || {
+        !(bit_value_1.get() & bit_value_2.get())
+    });
+    
+    let nor_result = Signal::derive(move || {
+        !(bit_value_1.get() | bit_value_2.get())
+    });
+view! {
+    <section class="uart-converter">
+
+        <div class="section-number">
+            "BIT MANIPULATION"
+        </div>
+
+        <h2>
+            "Bitwise Calculator"
+        </h2>
+
+        <p class="uart-description">
+            "Perform 64-bit bitwise operations and inspect the results in multiple formats."
+        </p>
+
+
+        <div>
+
+            <div>
+                <div class="converter-panel-title">
+                    "INPUT REGISTERS"
+                </div>
+            </div>
+
+            <div class="lab-body">
+
+                <div class="lab-grid">
+
+                    <div class="converter-binary-panel-title">
+
+                        <label for="bit-value-1">
+                            "VALUE A"
+                        </label>
+
+                        <input
+                            id="bit-value-1"
+                            class="converter-binary-input"
+                            type="number"
+                            placeholder="Enter value..."
+                            on:input=move |ev| {
+                                set_bit_value_1.set(
+                                    parse_input(
+                                        event_target_value(&ev),
+                                        option_read.get()
+                                    )
+                                );
+                            }
+                        />
+
+                    </div>
+
+
+                    <div class="converter-binary-panel-title">
+
+                        <label for="bit-value-2">
+                            "VALUE B"
+                        </label>
+
+                        <input
+                            id="bit-value-2"
+                            class="converter-binary-input"
+                            type="number"
+                            placeholder="Enter value..."
+                            on:input=move |ev| {
+                                set_bit_value_2.set(
+                                    parse_input(
+                                        event_target_value(&ev),
+                                        option_read.get()
+                                    )
+                                );
+                            }
+                        />
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="converter-panel-title"
+                    style="margin-top: 20px ;text-align: center ;"
+                >
+
+                    <label for="display-mode">
+                        "INPUT FORMAT"
+                    </label>
+
+                    <select
+                        id="display-mode"
+                        class="converter-binary-input"
+                        style="text-align: center "
+                        on:change=move |event| {
+
+                            let value = event_target_value(&event);
+
+                            let current_display_option =
+                                match value.as_str() {
+
+                                    "decimal" =>
+                                        ShowModes::Decimal,
+
+                                    "binary" =>
+                                        ShowModes::Binary,
+
+                                    "hexadecimal" =>
+                                        ShowModes::Hexadecimal,
+
+                                    _ =>
+                                        ShowModes::Decimal,
+                                };
+
+                            option_write.set(current_display_option);
+                        }
+                    >
+
+                        <option value="decimal">
+                            "DECIMAL"
+                        </option>
+
+                        <option value="binary">
+                            "BINARY"
+                        </option>
+
+                        <option value="hexadecimal">
+                            "HEXADECIMAL"
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            class=""
+            style="margin-top: 30px;"
+        >
+
+            <div class="">
+
+                <h4>
+                    "BITWISE OPERATIONS"
+                </h4>
+
+                <p>
+                    "U64"
+                </p>
+
+            </div>
+
+
+            <div class="converter-panel">
+
+                <table class="byte-table">
+
+                    <thead>
+                        <tr>
+                            <th>"OPERATION"</th>
+                            <th>"RESULT"</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td class="byte-hex">
+                                "AND"
+                            </td>
+
+                            <td>
+                                <BitResult
+                                    value=and_result
+                                />
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td class="byte-hex">
+                                "OR"
+                            </td>
+
+                            <td>
+                                <BitResult
+                                    value=or_result
+                                />
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td class="byte-hex">
+                                "XOR"
+                            </td>
+
+                            <td>
+                                <BitResult
+                                    value=xor_result
+                                />
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td class="byte-hex">
+                                "NAND"
+                            </td>
+
+                            <td>
+                                <BitResult
+                                    value=nand_result
+                                />
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td class="byte-hex">
+                                "NOR"
+                            </td>
+
+                            <td>
+                                <BitResult
+                                    value=nor_result
+                                />
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+}
+
+
+}
+
+
+

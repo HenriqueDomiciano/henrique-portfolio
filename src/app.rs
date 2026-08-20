@@ -181,6 +181,9 @@ pub fn HomePage() -> impl IntoView {
                     <div class = "terminal-body">
                         <applications::FileHasher />
                     </div>
+                    <div class = "terminal-body">
+                        <applications::BitManipulator />
+                    </div>
             </div>
         </section>
     }
