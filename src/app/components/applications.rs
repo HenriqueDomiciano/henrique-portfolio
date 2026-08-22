@@ -1,3 +1,5 @@
+use std::num::ParseIntError;
+
 use leptos::prelude::*;
 use leptos::wasm_bindgen::JsCast;
 use leptos::web_sys::HtmlInputElement;
@@ -272,12 +274,12 @@ pub enum ShowModes
 }
 
 
-fn parse_input(value:String, mode:ShowModes) -> u64
+fn parse_input(value:String, mode:ShowModes) -> Result<u64,ParseIntError>
 {
     match mode {
-        ShowModes::Decimal => u64::from_str_radix(&value, 10).unwrap_or(0) ,
-        ShowModes::Binary =>  u64::from_str_radix(&value, 2).unwrap_or(0) ,
-        ShowModes::Hexadecimal => u64::from_str_radix(&value, 16).unwrap_or(0) ,
+        ShowModes::Decimal => u64::from_str_radix(&value, 10) ,
+        ShowModes::Binary =>  u64::from_str_radix(&value, 2) ,
+        ShowModes::Hexadecimal => u64::from_str_radix(&value, 16) ,
     }
 }
 
@@ -364,15 +366,14 @@ view! {
                         <input
                             id="bit-value-1"
                             class="converter-binary-input"
-                            type="number"
+                            type="text"
                             placeholder="Enter value..."
                             on:input=move |ev| {
-                                set_bit_value_1.set(
-                                    parse_input(
-                                        event_target_value(&ev),
-                                        option_read.get()
-                                    )
-                                );
+                                match parse_input(event_target_value(&ev),option_read.get())
+                                {
+                                    Ok(a) => set_bit_value_1.set(a),
+                                    Err(_) => println!("ERROR PARSING"),
+                                };
                             }
                         />
 
@@ -388,15 +389,14 @@ view! {
                         <input
                             id="bit-value-2"
                             class="converter-binary-input"
-                            type="number"
+                            type="text"
                             placeholder="Enter value..."
                             on:input=move |ev| {
-                                set_bit_value_2.set(
-                                    parse_input(
-                                        event_target_value(&ev),
-                                        option_read.get()
-                                    )
-                                );
+                                match parse_input(event_target_value(&ev),option_read.get())
+                                {
+                                    Ok(a) => set_bit_value_2.set(a),
+                                    Err(_) => {},
+                                };
                             }
                         />
 
